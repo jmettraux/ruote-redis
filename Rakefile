@@ -33,7 +33,7 @@ Redis storage for ruote (a ruby workflow engine)
   gem.test_file = 'test/test.rb'
 
   gem.add_dependency 'ruote', ">= #{Ruote::Redis::VERSION}"
-  gem.add_dependency 'redis'
+  gem.add_dependency 'redis', '>= 0.2.0'
   gem.add_development_dependency 'yard'
   gem.add_development_dependency 'rake'
   gem.add_development_dependency 'jeweler'

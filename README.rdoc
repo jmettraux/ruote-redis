@@ -1,0 +1,50 @@
+
+= ruote-redis
+
+Redis persistence for ruote 2.1 (a ruby workflow engine)
+
+
+== usage
+
+...
+
+
+== running tests
+
+assuming you have
+
+  ruote/
+  ruote-redis/
+
+* unit tests :
+
+get into ruote/ and do
+
+  ruby test/unit/storage.rb --redis
+
+* functional tests :
+
+get into ruote/ and do
+
+  ruby test/functional/test.rb --redis
+
+
+== license
+
+MIT
+
+
+== links
+
+http://code.google.com/p/redis/
+http://github.com/ezmobius/redis-rb
+
+http://ruote.rubyforge.org/
+http://github.com/jmettraux/ruote-redis
+
+
+== feedback
+
+mailing list : http://groups.google.com/group/openwferu-users
+irc : irc.freenode.net #ruote
+

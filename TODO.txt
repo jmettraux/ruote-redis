@@ -1,0 +1,4 @@
+
+[ ] methods specific to StorageParticipant
+[ ] 1 ::Redis instance per thread ? (instead of :thread_safe => true)
+

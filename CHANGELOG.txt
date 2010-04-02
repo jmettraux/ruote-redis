@@ -1,0 +1,7 @@
+
+= ruote-redis - CHANGELOG.txt
+
+
+== ruote-redis 2.1.10    not yet released
+
+
