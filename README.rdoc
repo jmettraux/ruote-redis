@@ -6,7 +6,15 @@ Redis persistence for ruote 2.1 (a ruby workflow engine)
 
 == usage
 
-...
+  require 'ruote' # gem install ruote
+  require 'ruote-redis' # gem install ruote-redis
+
+  engine = Ruote::Engine.new(
+    Ruote::Worker.new(
+      Ruote::Redis::RedisStorage.new(
+        ::Redis.new(:db => 14, :thread_safe => true), {})))
+
+  # ...
 
 
 == running tests
