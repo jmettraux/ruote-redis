@@ -15,8 +15,7 @@ require 'ruote-redis'
 def new_storage (opts)
 
   Ruote::Redis::RedisStorage.new(
-    #::Redis.new(:db => 14, :threadsafe => true),
-    ::Redis.new(:db => 14),
+    ::Redis.new(:db => 14, :thread_safe => true),
     opts)
 end
 

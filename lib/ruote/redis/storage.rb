@@ -53,9 +53,7 @@ module Redis
       rev = doc['_rev'].to_i
       key = key_for(doc)
 
-      p key
-      p @redis[key].to_i
-      current_rev = @redis.get(key).to_i
+      current_rev = redis.get(key).to_i
 
       return true if current_rev == 0 && rev > 0
       return do_get(doc, current_rev) if rev != current_rev
@@ -65,11 +63,11 @@ module Redis
       json = Rufus::Json.encode(
         doc.merge('_rev' => nrev, 'put_at' => Ruote.now_to_utc_s))
 
-      r = @redis.setnx(key_rev_for(doc, nrev), json)
+      r = redis.setnx(key_rev_for(doc, nrev), json)
       return true if r == 0
 
-      @redis.set(key, nrev)
-      @redis.delete(key_rev_for(doc, rev))
+      redis.set(key, nrev)
+      redis.delete(key_rev_for(doc, rev))
 
       doc['_rev'] = nrev if opts[:update_rev]
 
@@ -78,7 +76,7 @@ module Redis
 
     def get (type, key)
 
-      do_get(type, key, @redis.get(key_for(type, key)))
+      do_get(type, key, redis.get(key_for(type, key)))
     end
 
     def delete (doc)
@@ -88,12 +86,12 @@ module Redis
       rev = doc['_rev'].to_i
       key = key_for(doc)
 
-      current_rev = @redis.get(key).to_i
+      current_rev = redis.get(key).to_i
 
       return true if rev != current_rev
 
-      @redis.delete(key)
-      @redis.delete(key_rev_for(doc, current_rev))
+      redis.delete(key)
+      redis.delete(key_rev_for(doc, current_rev))
 
       # NOTE : redis returns 0 if none of the specified keys got deleted
 
@@ -104,7 +102,7 @@ module Redis
 
       keys = "#{type}/*"
 
-      ids = @redis.keys(keys).inject({}) { |h, k|
+      ids = redis.keys(keys).inject({}) { |h, k|
 
         if m = k.match(/^[^\/]+\/([^\/]+)\/(\d+)$/)
 
@@ -124,13 +122,13 @@ module Redis
       end
 
       ids.collect { |i| i[1] }.collect do |i|
-        Rufus::Json.decode(@redis.get(i))
+        Rufus::Json.decode(redis.get(i))
       end
     end
 
     def ids (type)
 
-      @redis.keys("#{type}/*").inject([]) { |a, k|
+      redis.keys("#{type}/*").inject([]) { |a, k|
 
         if m = k.match(/^[^\/]+\/([^\/]+)$/)
           a << m[1]
@@ -142,7 +140,7 @@ module Redis
 
     def purge!
 
-      @redis.keys('*').each { |k| @redis.delete(k) }
+      redis.keys('*').each { |k| redis.delete(k) }
     end
 
     #def dump (type)
@@ -161,7 +159,7 @@ module Redis
     #
     def purge_type! (type)
 
-      @redis.keys("#{type}/*").each { |k| @redis.delete(k) }
+      redis.keys("#{type}/*").each { |k| redis.delete(k) }
     end
 
     # A provision made for workitems, allow to query them directly by
@@ -261,7 +259,7 @@ module Redis
 
     def do_get (*args)
 
-      d = @redis.get(key_rev_for(*args))
+      d = redis.get(key_rev_for(*args))
 
       d ? Rufus::Json.decode(d) : nil
     end
