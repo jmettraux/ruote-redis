@@ -87,13 +87,12 @@ module Redis
       key = key_for(doc)
 
       current_rev = redis.get(key).to_i
-
       return true if rev != current_rev
 
-      redis.del(key)
-      redis.del(key_rev_for(doc, current_rev))
+      r = redis.del(key_rev_for(doc, current_rev))
+      return true unless r
 
-      # NOTE : redis returns 0 if none of the specified keys got deleted
+      redis.del(key)
 
       nil
     end

@@ -12,10 +12,19 @@ Rufus::Json.detect_backend
 require 'ruote-redis'
 
 
+class Logger
+  def method_missing (m, *args)
+    super if args.length != 1
+    puts ". #{Time.now.to_f} #{Thread.current.object_id} #{args.first}"
+  end
+end
+
+
 def new_storage (opts)
 
   Ruote::Redis::RedisStorage.new(
     ::Redis.new(:db => 14, :thread_safe => true),
+    #::Redis.new(:db => 14, :thread_safe => true, :logger => Logger.new),
     opts)
 end
 
