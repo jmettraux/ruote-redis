@@ -1,4 +1,6 @@
 
-[ ] methods specific to StorageParticipant
+[x] methods specific to StorageParticipant
 [ ] 1 ::Redis instance per thread ? (instead of :thread_safe => true)
+
+[ ] double-check for deletion of old keys
 

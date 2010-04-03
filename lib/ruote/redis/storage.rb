@@ -67,7 +67,7 @@ module Redis
       return true if r == 0
 
       redis.set(key, nrev)
-      redis.delete(key_rev_for(doc, rev))
+      redis.del(key_rev_for(doc, rev))
 
       doc['_rev'] = nrev if opts[:update_rev]
 
@@ -90,8 +90,8 @@ module Redis
 
       return true if rev != current_rev
 
-      redis.delete(key)
-      redis.delete(key_rev_for(doc, current_rev))
+      redis.del(key)
+      redis.del(key_rev_for(doc, current_rev))
 
       # NOTE : redis returns 0 if none of the specified keys got deleted
 
@@ -140,7 +140,7 @@ module Redis
 
     def purge!
 
-      redis.keys('*').each { |k| redis.delete(k) }
+      redis.keys('*').each { |k| redis.del(k) }
     end
 
     #def dump (type)
@@ -159,7 +159,7 @@ module Redis
     #
     def purge_type! (type)
 
-      redis.keys("#{type}/*").each { |k| redis.delete(k) }
+      redis.keys("#{type}/*").each { |k| redis.del(k) }
     end
 
     protected
