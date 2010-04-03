@@ -4,3 +4,5 @@
 
 [ ] double-check for deletion of old keys
 
+[ ] put_no_rev (for schedules and msgs)
+

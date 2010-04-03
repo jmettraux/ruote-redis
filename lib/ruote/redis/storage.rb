@@ -50,6 +50,8 @@ module Redis
 
     def put (doc, opts={})
 
+      return do_put_msg(doc) if doc['type'] == 'msgs'
+
       rev = doc['_rev'].to_i
       key = key_for(doc)
 
@@ -120,8 +122,10 @@ module Redis
         ids = ids[0, l]
       end
 
-      ids.collect { |i| i[1] }.collect do |i|
-        Rufus::Json.decode(redis.get(i))
+      ids.collect { |i| i[1] }.inject([]) do |a, i|
+        v = redis.get(i)
+        a << Rufus::Json.decode(v) if v
+        a
       end
     end
 
