@@ -48,14 +48,23 @@ module Redis
       put_configuration
     end
 
-    def put (doc, opts={})
+    def put_msg (action, options)
 
-      return do_put_msg(doc) if doc['type'] == 'msgs'
+      doc = prepare_msg_doc(action, options)
+
+      @redis.set(
+        key_for(doc),
+        Rufus::Json.encode(doc.merge('put_at' => Ruote.now_to_utc_s)))
+
+      nil
+    end
+
+    def put (doc, opts={})
 
       rev = doc['_rev'].to_i
       key = key_for(doc)
 
-      current_rev = redis.get(key).to_i
+      current_rev = @redis.get(key).to_i
 
       return true if current_rev == 0 && rev > 0
       return do_get(doc, current_rev) if rev != current_rev
@@ -65,11 +74,11 @@ module Redis
       json = Rufus::Json.encode(
         doc.merge('_rev' => nrev, 'put_at' => Ruote.now_to_utc_s))
 
-      r = redis.setnx(key_rev_for(doc, nrev), json)
+      r = @redis.setnx(key_rev_for(doc, nrev), json)
       return true if r == 0
 
-      redis.set(key, nrev)
-      redis.del(key_rev_for(doc, rev))
+      @redis.set(key, nrev)
+      @redis.del(key_rev_for(doc, rev))
 
       doc['_rev'] = nrev if opts[:update_rev]
 
@@ -78,23 +87,27 @@ module Redis
 
     def get (type, key)
 
-      do_get(type, key, redis.get(key_for(type, key)))
+      do_get(type, key, @redis.get(key_for(type, key)))
     end
 
     def delete (doc)
+
+      key_for(doc)
+
+      return(redis.del(key_for(doc)) ? nil : true) if doc['type'] == 'msgs'
 
       raise ArgumentError.new('no _rev for doc') unless doc['_rev']
 
       rev = doc['_rev'].to_i
       key = key_for(doc)
 
-      current_rev = redis.get(key).to_i
+      current_rev = @redis.get(key).to_i
       return true if rev != current_rev
 
-      r = redis.del(key_rev_for(doc, current_rev))
+      r = @redis.del(key_rev_for(doc, current_rev))
       return true unless r
 
-      redis.del(key)
+      @redis.del(key)
 
       nil
     end
@@ -103,27 +116,34 @@ module Redis
 
       keys = "#{type}/*"
 
-      ids = redis.keys(keys).inject({}) { |h, k|
+      ids = if type == 'msgs'
 
-        if m = k.match(/^[^\/]+\/([^\/]+)\/(\d+)$/)
+        @redis.keys(keys)
 
-          if ( ! key) || m[1].match(key)
+      else
 
-            o = h[m[1]]
-            n = [ m[2].to_i, k ]
-            h[m[1]] = [ m[2].to_i, k ] if ( ! o) || o.first < n.first
+        @redis.keys(keys).inject({}) { |h, k|
+
+          if m = k.match(/^[^\/]+\/([^\/]+)\/(\d+)$/)
+
+            if ( ! key) || m[1].match(key)
+
+              o = h[m[1]]
+              n = [ m[2].to_i, k ]
+              h[m[1]] = [ m[2].to_i, k ] if ( ! o) || o.first < n.first
+            end
           end
-        end
 
-        h
-      }.values
+          h
+        }.values.collect { |i| i[1] }
+      end
 
       if l = opts[:limit]
         ids = ids[0, l]
       end
 
-      ids.collect { |i| i[1] }.inject([]) do |a, i|
-        v = redis.get(i)
+      ids.inject([]) do |a, i|
+        v = @redis.get(i)
         a << Rufus::Json.decode(v) if v
         a
       end
@@ -131,7 +151,7 @@ module Redis
 
     def ids (type)
 
-      redis.keys("#{type}/*").inject([]) { |a, k|
+      @redis.keys("#{type}/*").inject([]) { |a, k|
 
         if m = k.match(/^[^\/]+\/([^\/]+)$/)
           a << m[1]
@@ -143,7 +163,7 @@ module Redis
 
     def purge!
 
-      redis.keys('*').each { |k| redis.del(k) }
+      @redis.keys('*').each { |k| @redis.del(k) }
     end
 
     #def dump (type)
@@ -162,7 +182,7 @@ module Redis
     #
     def purge_type! (type)
 
-      redis.keys("#{type}/*").each { |k| redis.del(k) }
+      @redis.keys("#{type}/*").each { |k| @redis.del(k) }
     end
 
     protected
@@ -198,7 +218,7 @@ module Redis
 
     def do_get (*args)
 
-      d = redis.get(key_rev_for(*args))
+      d = @redis.get(key_rev_for(*args))
 
       d ? Rufus::Json.decode(d) : nil
     end
