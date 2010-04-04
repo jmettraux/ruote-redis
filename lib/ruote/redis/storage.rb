@@ -48,15 +48,33 @@ module Redis
       put_configuration
     end
 
+    def reserve (doc)
+
+      @redis.del(key_for(doc))
+    end
+
     def put_msg (action, options)
 
       doc = prepare_msg_doc(action, options)
 
-      @redis.set(
-        key_for(doc),
-        Rufus::Json.encode(doc.merge('put_at' => Ruote.now_to_utc_s)))
+      @redis.set(key_for(doc), to_json(doc))
 
       nil
+    end
+
+    def put_schedule (flavour, owner_fei, s, msg)
+
+      if doc = prepare_schedule_doc(flavour, owner_fei, s, msg)
+        @redis.set(key_for(doc), to_json(doc))
+        return doc['_id']
+      end
+
+      nil
+    end
+
+    def delete_schedule (schedule_id)
+
+      @redis.del(key_for('schedules', schedule_id))
     end
 
     def put (doc, opts={})
@@ -71,10 +89,9 @@ module Redis
 
       nrev = rev + 1
 
-      json = Rufus::Json.encode(
-        doc.merge('_rev' => nrev, 'put_at' => Ruote.now_to_utc_s))
+      doc['_rev'] = nrev
 
-      r = @redis.setnx(key_rev_for(doc, nrev), json)
+      r = @redis.setnx(key_rev_for(doc, nrev), to_json(doc))
       return true if r == 0
 
       @redis.set(key, nrev)
@@ -91,10 +108,6 @@ module Redis
     end
 
     def delete (doc)
-
-      key_for(doc)
-
-      return(redis.del(key_for(doc)) ? nil : true) if doc['type'] == 'msgs'
 
       raise ArgumentError.new('no _rev for doc') unless doc['_rev']
 
@@ -116,7 +129,7 @@ module Redis
 
       keys = "#{type}/*"
 
-      ids = if type == 'msgs'
+      ids = if type == 'msgs' || type == 'schedules'
 
         @redis.keys(keys)
 
@@ -221,6 +234,11 @@ module Redis
       d = @redis.get(key_rev_for(*args))
 
       d ? Rufus::Json.decode(d) : nil
+    end
+
+    def to_json (doc)
+
+      Rufus::Json.encode(doc.merge('put_at' => Ruote.now_to_utc_s))
     end
 
     # Don't put configuration if it's already in
