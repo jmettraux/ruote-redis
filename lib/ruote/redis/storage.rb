@@ -115,11 +115,12 @@ module Redis
 
       nrev = rev + 1
 
-      doc['_rev'] = nrev
-
       # the setnx here is crucial in multiple workers env...
 
-      r = @redis.setnx(key_rev_for(doc, nrev), to_json(doc, opts))
+      r = @redis.setnx(
+        key_rev_for(doc, nrev),
+        to_json(doc.merge('_rev' => nrev), opts))
+
       return get(doc['type'], doc['_id']) if r == false
 
       @redis.set(key, nrev)
