@@ -153,6 +153,11 @@ module Redis
       }
         # deleting the key_rev last and making 1 'keys' call preliminarily
 
+      #@redis.del(key_for(doc))
+      #@redis.del(key_rev_for(doc))
+      #@redis.expire(key_rev_for(doc, doc['_rev'] + 1), 1)
+        # interesting 'variant'
+
       nil
     end
 
