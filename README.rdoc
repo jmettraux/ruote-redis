@@ -6,6 +6,9 @@ Redis persistence for ruote 2.1 (a ruby workflow engine)
 
 == usage
 
+The storage is instantiate by passing a redis-rb instance to the storage.
+
+  require 'redis' # gem install redis
   require 'ruote' # gem install ruote
   require 'ruote-redis' # gem install ruote-redis
 
@@ -15,6 +18,10 @@ Redis persistence for ruote 2.1 (a ruby workflow engine)
         ::Redis.new(:db => 14, :thread_safe => true), {})))
 
   # ...
+
+Passing an em-redis instance might work, but I haven't tried.
+
+Tested with Redis 1.2.6 and 1.3.8.
 
 
 == running tests
@@ -55,4 +62,9 @@ http://github.com/jmettraux/ruote-redis
 
 mailing list : http://groups.google.com/group/openwferu-users
 irc : irc.freenode.net #ruote
+
+
+== thanks to
+
+- the Redis authors and the redis-rb authors
 

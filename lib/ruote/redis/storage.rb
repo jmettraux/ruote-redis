@@ -22,7 +22,9 @@
 # Made in Japan.
 #++
 
-require 'redis'
+#require 'redis'
+  # now letting the end-user doing this require
+
 require 'rufus-json'
 require 'ruote/storage/base'
 require 'ruote/redis/version'
@@ -33,6 +35,30 @@ module Redis
 
   #
   # A Redis storage for ruote.
+  #
+  # The constructor accepts two arguments, the first one is a Redis instance
+  # ( see http://github.com/ezmobius/redis-rb ), the second one is the classic
+  # ruote engine options ( see
+  # http://ruote.rubyforge.org/configuration.html#engine )
+  #
+  #   require 'redis' # gem install redis
+  #   require 'ruote' # gem install ruote
+  #   require 'ruote-redis' # gem install ruote-redis
+  #
+  #   engine = Ruote::Engine.new(
+  #     Ruote::Worker.new(
+  #       Ruote::Redis::RedisStorage.new(
+  #         ::Redis.new(:db => 14, :thread_safe => true), {})))
+  #
+  #
+  # == em-redis
+  #
+  # Not tried, but I guess, that substituting an instance of em-redis for
+  # the redis instance passed to the constructor might work.
+  # http://github.com/madsimian/em-redis
+  #
+  # If you try and it works, feedback is welcome
+  # http://groups.google.com/group/openwferu-users
   #
   class RedisStorage
 
@@ -91,11 +117,13 @@ module Redis
 
       doc['_rev'] = nrev
 
-      r = @redis.setnx(key_rev_for(doc, nrev), to_json(doc))
-      return true if r == 0
+      # the setnx here is crucial in multiple workers env...
+
+      r = @redis.setnx(key_rev_for(doc, nrev), to_json(doc, opts))
+      return get(doc['type'], doc['_id']) if r == false
 
       @redis.set(key, nrev)
-      @redis.del(key_rev_for(doc, rev))
+      @redis.del(key_rev_for(doc, rev)) if rev > 0
 
       doc['_rev'] = nrev if opts[:update_rev]
 
@@ -109,18 +137,21 @@ module Redis
 
     def delete (doc)
 
-      raise ArgumentError.new('no _rev for doc') unless doc['_rev']
+      r = put(doc, :delete => true)
 
-      rev = doc['_rev'].to_i
-      key = key_for(doc)
+      return r if r != nil
 
-      current_rev = @redis.get(key).to_i
-      return true if rev != current_rev
+      #Thread.pass
+      #@redis.del(key_for(doc))
+      #@redis.del(key_rev_for(doc))
+      #@redis.del(key_rev_for(doc, doc['_rev'] + 1))
+        # deleting the key_rev last, so to prevent concurrent writes
 
-      r = @redis.del(key_rev_for(doc, current_rev))
-      return true unless r
-
-      @redis.del(key)
+      @redis.keys("#{key_for(doc)}*").sort.each { |k|
+        Thread.pass # lingering a bit...
+        @redis.del(k)
+      }
+        # deleting the key_rev last and making 1 'keys' call preliminarily
 
       nil
     end
@@ -236,9 +267,15 @@ module Redis
       d ? Rufus::Json.decode(d) : nil
     end
 
-    def to_json (doc)
+    def to_json (doc, opts={})
 
-      Rufus::Json.encode(doc.merge('put_at' => Ruote.now_to_utc_s))
+      doc = if opts[:delete]
+        nil
+      else
+        doc.merge('put_at' => Ruote.now_to_utc_s)
+      end
+
+      Rufus::Json.encode(doc)
     end
 
     # Don't put configuration if it's already in
