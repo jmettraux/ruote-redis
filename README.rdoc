@@ -51,11 +51,11 @@ MIT
 
 == links
 
-http://code.google.com/p/redis/
-http://github.com/ezmobius/redis-rb
+* http://code.google.com/p/redis/
+* http://github.com/ezmobius/redis-rb
 
-http://ruote.rubyforge.org/
-http://github.com/jmettraux/ruote-redis
+* http://ruote.rubyforge.org/
+* http://github.com/jmettraux/ruote-redis
 
 
 == feedback
