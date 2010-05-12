@@ -138,26 +138,18 @@ module Redis
 
     def delete (doc)
 
+      raise ArgumentError.new(
+        "can't delete doc without _rev") unless doc['_rev']
+
       r = put(doc, :delete => true)
 
       return r if r != nil
-
-      #Thread.pass
-      #@redis.del(key_for(doc))
-      #@redis.del(key_rev_for(doc))
-      #@redis.del(key_rev_for(doc, doc['_rev'] + 1))
-        # deleting the key_rev last, so to prevent concurrent writes
 
       @redis.keys("#{key_for(doc)}*").sort.each { |k|
         Thread.pass # lingering a bit...
         @redis.del(k)
       }
         # deleting the key_rev last and making 1 'keys' call preliminarily
-
-      #@redis.del(key_for(doc))
-      #@redis.del(key_rev_for(doc))
-      #@redis.expire(key_rev_for(doc, doc['_rev'] + 1), 1)
-        # interesting 'variant'
 
       nil
     end
