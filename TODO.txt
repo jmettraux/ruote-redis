@@ -3,6 +3,8 @@
 [o] redis -> @redis
 
 [ ] 1 ::Redis instance per thread ? (instead of :thread_safe => true)
+[ ] update to redis-rb 2.0 (which has sthing about threads)
+    http://blog.citrusbyte.com/2010/05/14/redis-rb-200/
 
 [ ] double-check for deletion of old keys
 
