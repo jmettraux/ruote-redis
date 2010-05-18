@@ -4,5 +4,6 @@
 
 == ruote-redis 2.1.10    not yet released
 
+- works with redis-rb 1.0.2 and 2.0
 - initial release
 

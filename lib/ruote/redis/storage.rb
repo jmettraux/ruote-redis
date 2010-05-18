@@ -71,6 +71,11 @@ module Redis
       @redis = redis
       @options = options
 
+      def @redis.keys_to_a (opt)
+        r = keys(opt)
+        r.is_a?(Array) ? r : r.split(' ')
+      end
+
       put_configuration
     end
 
@@ -145,7 +150,7 @@ module Redis
 
       return r if r != nil
 
-      @redis.keys("#{key_for(doc)}*").sort.each { |k|
+      @redis.keys_to_a("#{key_for(doc)}*").sort.each { |k|
         Thread.pass # lingering a bit...
         @redis.del(k)
       }
@@ -160,11 +165,11 @@ module Redis
 
       ids = if type == 'msgs' || type == 'schedules'
 
-        @redis.keys(keys)
+        @redis.keys_to_a(keys)
 
       else
 
-        @redis.keys(keys).inject({}) { |h, k|
+        @redis.keys_to_a(keys).inject({}) { |h, k|
 
           if m = k.match(/^[^\/]+\/([^\/]+)\/(\d+)$/)
 
@@ -193,7 +198,7 @@ module Redis
 
     def ids (type)
 
-      @redis.keys("#{type}/*").inject([]) { |a, k|
+      @redis.keys_to_a("#{type}/*").inject([]) { |a, k|
 
         if m = k.match(/^[^\/]+\/([^\/]+)$/)
           a << m[1]
@@ -205,7 +210,7 @@ module Redis
 
     def purge!
 
-      @redis.keys('*').each { |k| @redis.del(k) }
+      @redis.keys_to_a('*').each { |k| @redis.del(k) }
     end
 
     #def dump (type)
@@ -224,7 +229,7 @@ module Redis
     #
     def purge_type! (type)
 
-      @redis.keys("#{type}/*").each { |k| @redis.del(k) }
+      @redis.keys_to_a("#{type}/*").each { |k| @redis.del(k) }
     end
 
     protected
