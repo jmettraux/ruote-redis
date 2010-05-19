@@ -205,7 +205,7 @@ module Redis
         end
 
         a
-      }
+      }.sort
     end
 
     def purge!
