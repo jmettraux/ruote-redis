@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["John Mettraux"]
-  s.date = %q{2010-04-05}
+  s.date = %q{2010-06-15}
   s.description = %q{Redis storage for ruote (a ruby workflow engine)}
   s.email = %q{jmettraux@gmail.com}
   s.extra_rdoc_files = [
@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
      "lib/ruote/redis/storage.rb",
      "lib/ruote/redis/version.rb",
      "ruote-redis.gemspec",
-     "test/integration_connection.rb"
+     "test/functional_connection.rb"
   ]
   s.homepage = %q{http://github.com/jmettraux/ruote-redis}
   s.rdoc_options = ["--charset=UTF-8"]
@@ -36,7 +36,7 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.6}
   s.summary = %q{Redis storage for ruote (a ruby workflow engine)}
   s.test_files = [
-    "test/test.rb"
+    "test/functional_connection.rb"
   ]
 
   if s.respond_to? :specification_version then
@@ -45,20 +45,20 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<ruote>, [">= 2.1.10"])
-      s.add_runtime_dependency(%q<redis>, [">= 1.0.2"])
+      s.add_runtime_dependency(%q<redis>, [">= 2.0.1"])
       s.add_development_dependency(%q<yard>, [">= 0"])
       s.add_development_dependency(%q<rake>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
     else
       s.add_dependency(%q<ruote>, [">= 2.1.10"])
-      s.add_dependency(%q<redis>, [">= 1.0.2"])
+      s.add_dependency(%q<redis>, [">= 2.0.1"])
       s.add_dependency(%q<yard>, [">= 0"])
       s.add_dependency(%q<rake>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
     end
   else
     s.add_dependency(%q<ruote>, [">= 2.1.10"])
-    s.add_dependency(%q<redis>, [">= 1.0.2"])
+    s.add_dependency(%q<redis>, [">= 2.0.1"])
     s.add_dependency(%q<yard>, [">= 0"])
     s.add_dependency(%q<rake>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])

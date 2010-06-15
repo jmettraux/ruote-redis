@@ -30,7 +30,7 @@ Redis storage for ruote (a ruby workflow engine)
   gem.authors = [ 'John Mettraux' ]
   gem.rubyforge_project = 'ruote'
 
-  gem.test_file = 'test/test.rb'
+  #gem.test_file = 'test/test.rb'
 
   gem.add_dependency 'ruote', ">= #{Ruote::Redis::VERSION}"
   gem.add_dependency 'redis', '>= 2.0.1'
