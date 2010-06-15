@@ -31,6 +31,9 @@ assuming you have
   ruote/
   ruote-redis/
 
+start a redis server instance (port 6379) and then 
+
+
 * unit tests :
 
 get into ruote/ and do
@@ -64,7 +67,7 @@ mailing list : http://groups.google.com/group/openwferu-users
 irc : irc.freenode.net #ruote
 
 
-== thanks to
+== many thanks to
 
 - the Redis authors and the redis-rb authors
 
