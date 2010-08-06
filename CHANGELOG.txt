@@ -2,6 +2,9 @@
 = ruote-redis - CHANGELOG.txt
 
 
+== ruote-redis 2.1.11    not yet released
+
+
 == ruote-redis 2.1.10    released 2010/06/15
 
 - works with redis-rb 1.0.2 and 2.0
