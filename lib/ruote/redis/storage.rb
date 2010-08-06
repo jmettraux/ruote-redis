@@ -189,11 +189,13 @@ module Redis
         ids = ids[0, l]
       end
 
-      ids.inject([]) do |a, i|
+      result = ids.inject([]) do |a, i|
         v = @redis.get(i)
         a << Rufus::Json.decode(v) if v
         a
       end
+
+      opts[:count] ? result.size : result
     end
 
     def ids (type)
