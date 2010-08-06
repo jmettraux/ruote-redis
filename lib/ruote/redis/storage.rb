@@ -185,6 +185,11 @@ module Redis
         }.values.collect { |i| i[1] }
       end
 
+      ids = ids.sort
+
+      if s = opts[:skip]
+        ids = ids[s..-1]
+      end
       if l = opts[:limit]
         ids = ids[0, l]
       end

@@ -4,6 +4,7 @@
 
 == ruote-redis 2.1.11    not yet released
 
+- get_many(x, y, :skip => 10) support
 - get_many(x, y, :count => true) support
 
 
