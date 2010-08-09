@@ -4,8 +4,9 @@
 
 == ruote-redis 2.1.11    not yet released
 
-- get_many(x, y, :skip => 10) support
-- get_many(x, y, :count => true) support
+- get_many(type, keys) support (array of keys instead of lonely regex key)
+- get_many(type, nil, :skip => 10) support
+- get_many(type, nil, :count => true) support
 
 
 == ruote-redis 2.1.10    released 2010/06/15

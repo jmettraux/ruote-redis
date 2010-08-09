@@ -161,46 +161,44 @@ module Redis
 
     def get_many (type, key=nil, opts={})
 
-      keys = "#{type}/*"
+      keys = key ? Array(key) : nil
 
       ids = if type == 'msgs' || type == 'schedules'
 
-        @redis.keys_to_a(keys)
+        @redis.keys_to_a("#{type}/*")
 
-      else
+      elsif keys == nil
 
-        @redis.keys_to_a(keys).inject({}) { |h, k|
+        @redis.keys_to_a("#{type}/*/*")
 
-          if m = k.match(/^[^\/]+\/([^\/]+)\/(\d+)$/)
+      elsif keys.first.is_a?(String)
 
-            if ( ! key) || m[1].match(key)
+        keys.collect { |k| @redis.keys_to_a("#{type}/*!#{k}/*") }.flatten
 
-              o = h[m[1]]
-              n = [ m[2].to_i, k ]
-              h[m[1]] = [ m[2].to_i, k ] if ( ! o) || o.first < n.first
-            end
-          end
+      else #if keys.first.is_a?(Regexp)
 
-          h
-        }.values.collect { |i| i[1] }
+        @redis.keys_to_a("#{type}/*/*").select { |i|
+          i = i[type.length + 1..-1]
+          keys.find { |k| k.match(i) }
+        }
       end
 
       ids = ids.sort
 
-      if s = opts[:skip]
-        ids = ids[s..-1]
-      end
-      if l = opts[:limit]
-        ids = ids[0, l]
+      skip = opts[:skip] || 0
+      limit = opts[:limit] || ids.length
+      ids = ids[skip, limit]
+
+      docs = ids.length > 0 ? @redis.mget(*ids) : []
+      docs = docs.inject({}) do |h, doc|
+        if doc
+          doc = Rufus::Json.decode(doc)
+          h[doc['_id']] = doc
+        end
+        h
       end
 
-      result = ids.inject([]) do |a, i|
-        v = @redis.get(i)
-        a << Rufus::Json.decode(v) if v
-        a
-      end
-
-      opts[:count] ? result.size : result
+      opts[:count] ? docs.size : docs.values
     end
 
     def ids (type)
@@ -224,7 +222,10 @@ module Redis
     #  @dbs[type].dump
     #end
 
-    def shutdown
+    def close
+
+      @redis.quit
+      @redis = nil
     end
 
     # Mainly used by ruote's test/unit/ut_17_storage.rb
