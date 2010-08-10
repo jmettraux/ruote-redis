@@ -95,12 +95,13 @@ module Redis
 
     def put_schedule (flavour, owner_fei, s, msg)
 
-      if doc = prepare_schedule_doc(flavour, owner_fei, s, msg)
-        @redis.set(key_for(doc), to_json(doc))
-        return doc['_id']
-      end
+      doc = prepare_schedule_doc(flavour, owner_fei, s, msg)
 
-      nil
+      return nil unless doc
+
+      @redis.set(key_for(doc), to_json(doc))
+
+      doc['_id']
     end
 
     def delete_schedule (schedule_id)
@@ -108,7 +109,22 @@ module Redis
       @redis.del(key_for('schedules', schedule_id))
     end
 
+    # 'msgs' and 'schedules'
+    #
+    MAS = %w[ msgs schedules ]
+
     def put (doc, opts={})
+
+      if MAS.include?(doc['type'])
+        #
+        # msgs and schedules are only put here in case of 'copy'
+        # they are a special case though
+        #
+        @redis.set(key_for(doc), to_json(doc))
+        return nil
+      end
+
+      # regular put
 
       rev = doc['_rev'].to_i
       key = key_for(doc)
@@ -137,6 +153,9 @@ module Redis
     end
 
     def get (type, key)
+
+      return from_json(@redis.get(key_for(type, key))) if MAS.include?(type)
+        # 'copy' case
 
       do_get(type, key, @redis.get(key_for(type, key)))
     end
@@ -218,9 +237,13 @@ module Redis
       @redis.keys_to_a('*').each { |k| @redis.del(k) }
     end
 
-    #def dump (type)
-    #  @dbs[type].dump
-    #end
+    # Returns a String containing a representation of the current content of
+    # in this Redis storage.
+    #
+    def dump (type)
+
+      @redis.keys_to_a("#{type}/*").sort.join("\n")
+    end
 
     def close
 
@@ -273,20 +296,18 @@ module Redis
 
     def do_get (*args)
 
-      d = @redis.get(key_rev_for(*args))
+      from_json(@redis.get(key_rev_for(*args)))
+    end
 
-      d ? Rufus::Json.decode(d) : nil
+    def from_json (s)
+
+      s ? Rufus::Json.decode(s) : nil
     end
 
     def to_json (doc, opts={})
 
-      doc = if opts[:delete]
-        nil
-      else
-        doc.merge('put_at' => Ruote.now_to_utc_s)
-      end
-
-      Rufus::Json.encode(doc)
+      Rufus::Json.encode(
+        opts[:delete] ? nil : doc.merge('put_at' => Ruote.now_to_utc_s))
     end
 
     # Don't put configuration if it's already in
