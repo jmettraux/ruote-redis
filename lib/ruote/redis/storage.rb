@@ -66,6 +66,8 @@ module Redis
 
     attr_reader :redis
 
+    # A Redis storage for ruote.
+    #
     def initialize (redis, options={})
 
       @redis = redis
@@ -197,12 +199,16 @@ module Redis
       else #if keys.first.is_a?(Regexp)
 
         @redis.keys_to_a("#{type}/*/*").select { |i|
-          i = i[type.length + 1..-1]
+
+          i = i[type.length + 1..i.rindex('/') - 1]
+            # removing "^type/" and "/\d+$"
+
           keys.find { |k| k.match(i) }
         }
       end
 
       ids = ids.sort
+      ids = ids.reverse if opts[:descending]
 
       skip = opts[:skip] || 0
       limit = opts[:limit] || ids.length
