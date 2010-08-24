@@ -136,7 +136,7 @@ module Redis
       return true if current_rev == 0 && rev > 0
       return do_get(doc, current_rev) if rev != current_rev
 
-      nrev = rev + 1
+      nrev = @redis.incr(key).to_i
 
       # the setnx here is crucial in multiple workers env...
 
