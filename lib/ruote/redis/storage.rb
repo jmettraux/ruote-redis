@@ -1,8 +1,8 @@
 #--
-# Copyright (c) 2005-2010, John Mettraux, jmettraux@gmail.com
+# Copyright(c) 2005-2010, John Mettraux, jmettraux@gmail.com
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
+# of this software and associated documentation files(the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
@@ -37,8 +37,8 @@ module Redis
   # A Redis storage for ruote.
   #
   # The constructor accepts two arguments, the first one is a Redis instance
-  # ( see http://github.com/ezmobius/redis-rb ), the second one is the classic
-  # ruote engine options ( see
+  #( see http://github.com/ezmobius/redis-rb ), the second one is the classic
+  # ruote engine options( see
   # http://ruote.rubyforge.org/configuration.html#engine )
   #
   #   require 'redis' # gem install redis
@@ -68,12 +68,12 @@ module Redis
 
     # A Redis storage for ruote.
     #
-    def initialize (redis, options={})
+    def initialize(redis, options={})
 
       @redis = redis
       @options = options
 
-      def @redis.keys_to_a (opt)
+      def @redis.keys_to_a(opt)
         r = keys(opt)
         r.is_a?(Array) ? r : r.split(' ')
       end
@@ -81,12 +81,12 @@ module Redis
       put_configuration
     end
 
-    def reserve (doc)
+    def reserve(doc)
 
       @redis.del(key_for(doc))
     end
 
-    def put_msg (action, options)
+    def put_msg(action, options)
 
       doc = prepare_msg_doc(action, options)
 
@@ -95,7 +95,7 @@ module Redis
       nil
     end
 
-    def put_schedule (flavour, owner_fei, s, msg)
+    def put_schedule(flavour, owner_fei, s, msg)
 
       doc = prepare_schedule_doc(flavour, owner_fei, s, msg)
 
@@ -106,7 +106,7 @@ module Redis
       doc['_id']
     end
 
-    def delete_schedule (schedule_id)
+    def delete_schedule(schedule_id)
 
       @redis.del(key_for('schedules', schedule_id))
     end
@@ -115,7 +115,7 @@ module Redis
     #
     MAS = %w[ msgs schedules ]
 
-    def put (doc, opts={})
+    def put(doc, opts={})
 
       if MAS.include?(doc['type'])
         #
@@ -154,7 +154,7 @@ module Redis
       nil
     end
 
-    def get (type, key)
+    def get(type, key)
 
       return from_json(@redis.get(key_for(type, key))) if MAS.include?(type)
         # 'copy' case
@@ -162,7 +162,7 @@ module Redis
       do_get(type, key, @redis.get(key_for(type, key)))
     end
 
-    def delete (doc)
+    def delete(doc)
 
       raise ArgumentError.new(
         "can't delete doc without _rev") unless doc['_rev']
@@ -180,7 +180,7 @@ module Redis
       nil
     end
 
-    def get_many (type, key=nil, opts={})
+    def get_many(type, key=nil, opts={})
 
       keys = key ? Array(key) : nil
 
@@ -226,7 +226,7 @@ module Redis
       opts[:count] ? docs.size : docs.values
     end
 
-    def ids (type)
+    def ids(type)
 
       @redis.keys_to_a("#{type}/*").inject([]) { |a, k|
 
@@ -246,7 +246,7 @@ module Redis
     # Returns a String containing a representation of the current content of
     # in this Redis storage.
     #
-    def dump (type)
+    def dump(type)
 
       @redis.keys_to_a("#{type}/*").sort.join("\n")
     end
@@ -259,12 +259,12 @@ module Redis
 
     # Mainly used by ruote's test/unit/ut_17_storage.rb
     #
-    def add_type (type)
+    def add_type(type)
     end
 
-    # Nukes a db type and reputs it (losing all the documents that were in it).
+    # Nukes a db type and reputs it(losing all the documents that were in it).
     #
-    def purge_type! (type)
+    def purge_type!(type)
 
       @redis.keys_to_a("#{type}/*").each { |k| @redis.del(k) }
     end
@@ -274,18 +274,18 @@ module Redis
     #   key_for(doc)
     #   key_for(type, key)
     #
-    def key_for (*args)
+    def key_for(*args)
 
       a = args.first
 
-      (a.is_a?(Hash) ? [ a['type'], a['_id'] ] : args[0, 2]).join('/')
+     (a.is_a?(Hash) ? [ a['type'], a['_id'] ] : args[0, 2]).join('/')
     end
 
     #   key_rev_for(doc)
     #   key_rev_for(doc, rev)
     #   key_rev_for(type, key, rev)
     #
-    def key_rev_for (*args)
+    def key_rev_for(*args)
 
       as = nil
       a = args.first
@@ -300,17 +300,17 @@ module Redis
       as.join('/')
     end
 
-    def do_get (*args)
+    def do_get(*args)
 
       from_json(@redis.get(key_rev_for(*args)))
     end
 
-    def from_json (s)
+    def from_json(s)
 
       s ? Rufus::Json.decode(s) : nil
     end
 
-    def to_json (doc, opts={})
+    def to_json(doc, opts={})
 
       Rufus::Json.encode(
         opts[:delete] ? nil : doc.merge('put_at' => Ruote.now_to_utc_s))
@@ -318,7 +318,7 @@ module Redis
 
     # Don't put configuration if it's already in
     #
-    # (avoid storages from trashing configuration...)
+    #(avoid storages from trashing configuration...)
     #
     def put_configuration
 
