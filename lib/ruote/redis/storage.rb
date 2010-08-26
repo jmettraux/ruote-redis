@@ -287,28 +287,30 @@ module Redis
 
       kl = "#{key}-lock"
 
-      #p [ kl, :locking, Thread.current.object_id, Time.now.to_f ]
-
-      #while @redis.setnx(kl, 'null') == false; sleep(0.007); end
       loop do
+
         r = @redis.setnx(kl, Time.now.to_f.to_s)
-        #p [ :setnx, r ]
+
         if r == false
-          sleep 0.007
+
+          t = @redis.get(kl)
+
+          @redis.del(kl) if t && Time.now.to_f - t.to_f > 60.0
+            # after 1 minute, locks time out
+
+          sleep 0.007 # let's try to lock again after a while
         else
-          break
+
+          break # lock acquired
         end
       end
 
-      #p [ kl, :locked, Thread.current.object_id, Time.now.to_f ]
-
       #@redis.expire(kl, 2)
+        # this doesn't work, it makes the next call to setnx succeed
 
       result = block.call
 
       @redis.del(kl)
-
-      #p [ kl, :unlocked, Thread.current.object_id, Time.now.to_f ]
 
       result
     end
