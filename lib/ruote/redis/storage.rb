@@ -90,6 +90,8 @@ module Redis
 
       doc = prepare_msg_doc(action, options)
 
+      puts "XXX" if @redis.nil?
+
       @redis.set(key_for(doc), to_json(doc))
 
       nil
@@ -274,7 +276,6 @@ module Redis
     def close
 
       @redis.quit
-      @redis = nil
     end
 
     # Mainly used by ruote's test/unit/ut_17_storage.rb
