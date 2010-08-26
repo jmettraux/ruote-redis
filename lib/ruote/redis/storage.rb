@@ -113,22 +113,7 @@ module Redis
       @redis.del(key_for('schedules', schedule_id))
     end
 
-    # 'msgs' and 'schedules'
-    #
-    MAS = %w[ msgs schedules ]
-
     def put(doc, opts={})
-
-      if MAS.include?(doc['type'])
-        #
-        # msgs and schedules are only put here in case of 'copy'
-        # they are a special case though
-        #
-        @redis.set(key_for(doc), to_json(doc))
-        return nil
-      end
-
-      # regular put
 
       key = key_for(doc)
       rev = doc['_rev']
@@ -294,6 +279,10 @@ module Redis
 
     LOCK_KEY = /-lock$/
 
+    # A locking mecha.
+    #
+    # Mostly inspired from http://code.google.com/p/redis/wiki/SetnxCommand
+    #
     def lock(key, &block)
 
       kl = "#{key}-lock"
