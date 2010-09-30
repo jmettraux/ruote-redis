@@ -46,33 +46,30 @@ Jeweler::GemcutterTasks.new
 #
 # DOC
 
-begin
+#
+# make sure to have rdoc 2.5.x to run that
+#
+require 'rake/rdoctask'
+Rake::RDocTask.new do |rd|
 
-  require 'yard'
+  rd.main = 'README.rdoc'
+  rd.rdoc_dir = 'rdoc/ruote-redis_rdoc'
 
-  YARD::Rake::YardocTask.new do |doc|
-    doc.options = [
-      '-o', 'html/ruote-redis', '--title',
-      "ruote-redis #{Ruote::Redis::VERSION}"
-    ]
-  end
+  rd.rdoc_files.include(
+    'README.rdoc', 'CHANGELOG.txt', 'CREDITS.txt', 'lib/**/*.rb')
 
-rescue LoadError
-
-  task :yard do
-    abort "YARD is not available : sudo gem install yard"
-  end
+  rd.title = "ruote-redis #{Ruote::Redis::VERSION}"
 end
 
 
 #
 # TO THE WEB
 
-task :upload_website => [ :clean, :yard ] do
+task :upload_rdoc => [ :clean, :rdoc ] do
 
   account = 'jmettraux@rubyforge.org'
   webdir = '/var/www/gforge-projects/ruote'
 
-  sh "rsync -azv -e ssh html/ruote-redis #{account}:#{webdir}/"
+  sh "rsync -azv -e ssh rdoc/ruote-redis_rdoc #{account}:#{webdir}/"
 end
 

@@ -1,0 +1,18 @@
+
+= ruote-redis CREDITS.txt
+
+
+== authors
+
+- John Mettraux  http://jmettraux.wordpress.com
+
+
+== contributors
+
+- Aaron Lee - http://github.com/wwkeyboard
+
+
+== many thanks to
+
+- the Redis team for their wonderful work
+
