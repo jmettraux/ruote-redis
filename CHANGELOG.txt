@@ -2,8 +2,9 @@
 = ruote-redis - CHANGELOG.txt
 
 
-== ruote-redis 2.1.11    not yet released
+== ruote-redis 2.1.11    released 2010/10/01
 
+- storage format change (thanks @wwkeyboard)
 - get_many(type, keys) support (array of keys instead of lonely regex key)
 - get_many(type, nil, :skip => 10) support
 - get_many(type, nil, :count => true) support

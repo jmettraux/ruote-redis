@@ -14,5 +14,5 @@
 
 == many thanks to
 
-- the Redis team for their wonderful work
+- the Redis team for their great project
 
