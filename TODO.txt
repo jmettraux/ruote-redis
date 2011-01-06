@@ -8,3 +8,5 @@
 
 [ ] double-check for deletion of old keys
 
+[ ] resque participant ?
+
