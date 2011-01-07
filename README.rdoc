@@ -1,7 +1,7 @@
 
 = ruote-redis
 
-Redis persistence for ruote 2.1 (a ruby workflow engine)
+Redis persistence for ruote 2.1 (a Ruby workflow engine)
 
 
 == usage
