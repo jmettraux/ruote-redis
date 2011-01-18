@@ -110,6 +110,8 @@ module Redis
 
     def delete_schedule(schedule_id)
 
+      return unless schedule_id
+
       @redis.del(key_for('schedules', schedule_id))
     end
 
