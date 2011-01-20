@@ -235,7 +235,11 @@ module Redis
         h
       end
 
-      opts[:count] ? docs.size : docs.values
+      return docs.size if opts[:count]
+
+      opts[:descending] ?
+        docs.values.sort { |d0, d1| d1['_id'] <=> d0['_id'] } :
+        docs.values.sort { |d0, d1| d0['_id'] <=> d1['_id'] }
     end
 
     def ids(type)

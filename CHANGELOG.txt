@@ -4,6 +4,8 @@
 
 == ruote-redis 2.1.12    not yet released
 
+- fixed get_many result order (was broken for 1.8.7)
+
 
 == ruote-redis 2.1.11    released 2010/10/01
 
