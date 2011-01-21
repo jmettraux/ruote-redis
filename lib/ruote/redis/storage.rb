@@ -60,7 +60,7 @@ module Redis
   # If you try and it works, feedback is welcome
   # http://groups.google.com/group/openwferu-users
   #
-  class RedisStorage
+  class Storage
 
     include Ruote::StorageBase
 
@@ -357,6 +357,12 @@ module Redis
 
       put({ '_id' => 'engine', 'type' => 'configurations' }.merge(@options))
     end
+  end
+
+  #
+  # Keeping Ruote::Redis::RedisStorage for backward compatibility.
+  #
+  class RedisStorage < Storage
   end
 end
 end

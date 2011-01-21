@@ -23,7 +23,7 @@ end
 
 def new_storage (opts)
 
-  Ruote::Redis::RedisStorage.new(
+  Ruote::Redis::Storage.new(
     ::Redis.new(:db => 14, :thread_safe => true),
     #::Redis.new(:db => 14, :thread_safe => true, :logger => RrLogger.new),
     opts)

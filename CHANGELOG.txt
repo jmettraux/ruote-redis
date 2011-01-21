@@ -4,6 +4,7 @@
 
 == ruote-redis 2.1.12    not yet released
 
+- Ruote::Redis::Storage (instead of RedisStorage)
 - fixed get_many result order (was broken for 1.8.7)
 
 

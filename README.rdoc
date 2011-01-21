@@ -14,7 +14,7 @@ The storage is instantiate by passing a redis-rb instance to the storage.
 
   engine = Ruote::Engine.new(
     Ruote::Worker.new(
-      Ruote::Redis::RedisStorage.new(
+      Ruote::Redis::Storage.new(
         ::Redis.new(:db => 14, :thread_safe => true), {})))
 
   # ...
