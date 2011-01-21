@@ -237,9 +237,9 @@ module Redis
 
       return docs.size if opts[:count]
 
-      opts[:descending] ?
-        docs.values.sort { |d0, d1| d1['_id'] <=> d0['_id'] } :
-        docs.values.sort { |d0, d1| d0['_id'] <=> d1['_id'] }
+      docs = docs.values.sort_by { |d| d['_id'] }
+
+      opts[:descending] ? docs.reverse : docs
     end
 
     def ids(type)
