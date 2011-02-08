@@ -1,7 +1,8 @@
 
 module Ruote
 module Redis
-  VERSION = '2.1.12'
+
+  VERSION = '2.2.0'
 end
 end
 
