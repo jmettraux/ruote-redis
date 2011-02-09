@@ -81,9 +81,11 @@ module Redis
       put_configuration
     end
 
+    # Returns true if the doc is successfully deleted.
+    #
     def reserve(doc)
 
-      @redis.del(key_for(doc))
+      (@redis.del(key_for(doc)) == 1)
     end
 
     def put_msg(action, options)
