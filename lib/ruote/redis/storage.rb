@@ -266,7 +266,20 @@ module Redis
       @redis.keys_to_a("#{type}/*").sort.join("\n")
     end
 
+    # Shuts this worker down.
+    #
+    # (This close / shutdown dichotomy has to be resolved at some point...)
+    #
     def close
+
+      @redis.quit
+    end
+
+    # Shuts this worker down.
+    #
+    # (This close / shutdown dichotomy has to be resolved at some point...)
+    #
+    def shutdown
 
       @redis.quit
     end
@@ -274,6 +287,8 @@ module Redis
     # Mainly used by ruote's test/unit/ut_17_storage.rb
     #
     def add_type(type)
+
+      # nothing to be done
     end
 
     # Nukes a db type and reputs it(losing all the documents that were in it).
