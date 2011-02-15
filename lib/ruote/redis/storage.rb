@@ -74,8 +74,7 @@ module Redis
       @options = options
 
       def @redis.keys_to_a(opt)
-        r = keys(opt)
-        r.is_a?(Array) ? r : r.split(' ')
+        keys(opt) rescue []
       end
 
       put_configuration
@@ -91,8 +90,6 @@ module Redis
     def put_msg(action, options)
 
       doc = prepare_msg_doc(action, options)
-
-      puts "XXX" if @redis.nil?
 
       @redis.set(key_for(doc), to_json(doc))
 
@@ -295,7 +292,7 @@ module Redis
     #
     def purge_type!(type)
 
-      @redis.keys_to_a("#{type}/*").each { |k| @redis.del(k) }
+      @redis.keys_to_a("#{type}/*").each { |k| (@redis.del(k) rescue nil) }
     end
 
     protected
