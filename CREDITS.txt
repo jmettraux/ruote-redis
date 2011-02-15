@@ -9,6 +9,7 @@
 
 == contributors
 
+- John Le - http://github.com/sandbox
 - Aaron Lee - http://github.com/wwkeyboard
 
 
