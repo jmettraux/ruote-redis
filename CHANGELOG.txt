@@ -2,6 +2,9 @@
 = ruote-redis - CHANGELOG.txt
 
 
+== ruote-redis 2.2.1    not yet released
+
+
 == ruote-redis 2.2.0    released 2011/03/01
 
 - Ruote::Redis::Storage (instead of RedisStorage)
