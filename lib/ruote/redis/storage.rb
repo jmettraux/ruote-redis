@@ -309,23 +309,18 @@ module Redis
 
       loop do
 
-        if @redis.setnx(kl, Time.now.to_f.to_s) == false
-          #
-          # already locked
-
-          t = @redis.get(kl)
-
-          @redis.del(kl) if t && Time.now.to_f - t.to_f > 60.0
-            # after 1 minute, locks time out
-
-          sleep 0.007 # let's try to lock again after a while
-
-        else
-          #
+        break if @redis.setnx(kl, Time.now.to_f.to_s) != false
           # locking successful
 
-          break
-        end
+        #
+        # already locked
+
+        t = @redis.get(kl)
+
+        @redis.del(kl) if t && Time.now.to_f - t.to_f > 60.0
+          # after 1 minute, locks time out
+
+        sleep 0.007 # let's try to lock again after a while
       end
 
       #@redis.expire(kl, 2)
