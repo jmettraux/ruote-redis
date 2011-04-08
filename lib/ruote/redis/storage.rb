@@ -37,7 +37,7 @@ module Redis
   # A Redis storage for ruote.
   #
   # The constructor accepts two arguments, the first one is a Redis instance
-  #( see http://github.com/ezmobius/redis-rb ), the second one is the classic
+  # ( see http://github.com/ezmobius/redis-rb ), the second one is the classic
   # ruote engine options( see
   # http://ruote.rubyforge.org/configuration.html#engine )
   #
