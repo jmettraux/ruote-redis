@@ -1,9 +1,12 @@
 # encoding: utf-8
 
+load 'lib/ruote/redis/version.rb'
+
+
 Gem::Specification.new do |s|
 
   s.name = 'ruote-redis'
-  s.version = File.read('lib/ruote/redis/version.rb').match(/VERSION = '([^']+)'/)[1]
+  s.version = Ruote::Redis::VERSION
   s.platform = Gem::Platform::RUBY
   s.authors = [ 'John Mettraux' ]
   s.email = [ 'jmettraux@gmail.com' ]
