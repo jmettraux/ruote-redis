@@ -84,6 +84,8 @@ module Redis
     #
     def reserve(doc)
 
+      return true if doc['type'] == 'msgs'
+
       (@redis.del(key_for(doc)) == 1)
     end
 
@@ -91,9 +93,20 @@ module Redis
 
       doc = prepare_msg_doc(action, options)
 
-      @redis.set(key_for(doc), to_json(doc))
+      @redis.rpush('msgs', to_json(doc))
 
       nil
+    end
+
+    def get_msgs
+
+      msgs = []
+
+      while (doc = @redis.lpop('msgs')) and (msgs.size < 21)
+        msgs << from_json(doc)
+      end
+
+      msgs
     end
 
     def put_schedule(flavour, owner_fei, s, msg)

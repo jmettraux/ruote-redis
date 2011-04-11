@@ -4,6 +4,8 @@
 
 == ruote-redis 2.2.1    not yet released
 
+- using rpush and lpop for msgs (one del less per msg)
+
 
 == ruote-redis 2.2.0    released 2011/03/01
 
