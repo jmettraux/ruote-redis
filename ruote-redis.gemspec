@@ -1,6 +1,7 @@
 # encoding: utf-8
 
-load 'lib/ruote/redis/version.rb'
+require File.join(File.dirname(__FILE__), 'lib/ruote/redis/version')
+  # bundler wants absolute path
 
 
 Gem::Specification.new do |s|
