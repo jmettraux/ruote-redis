@@ -21,7 +21,7 @@ class RrLogger
 end
 
 
-def new_storage (opts)
+def new_storage(opts)
 
   Ruote::Redis::Storage.new(
     ::Redis.new(:db => 14, :thread_safe => true),

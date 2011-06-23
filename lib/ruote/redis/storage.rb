@@ -71,13 +71,13 @@ module Redis
     def initialize(redis, options={})
 
       @redis = redis
-      @options = options
+      #@options = options
 
       def @redis.keys_to_a(opt)
         keys(opt) rescue []
       end
 
-      put_configuration
+      replace_engine_configuration(options)
     end
 
     # Returns true if the doc is successfully deleted.
@@ -370,17 +370,6 @@ module Redis
 
       Rufus::Json.encode(
         opts[:delete] ? nil : doc.merge('put_at' => Ruote.now_to_utc_s))
-    end
-
-    # Don't put configuration if it's already in
-    #
-    # (prevent storages from trashing configuration...)
-    #
-    def put_configuration
-
-      return if get('configurations', 'engine')
-
-      put({ '_id' => 'engine', 'type' => 'configurations' }.merge(@options))
     end
   end
 
