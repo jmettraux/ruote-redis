@@ -4,6 +4,7 @@
 
 == ruote-redis 2.2.1    not yet released
 
+- simplified storage initialization
 - using rpush and lpop for msgs (one del less per msg)
 
 

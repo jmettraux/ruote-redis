@@ -22,8 +22,7 @@
 # Made in Japan.
 #++
 
-#require 'redis'
-  # now letting the end-user doing this require
+require 'redis'
 
 require 'rufus-json'
 require 'ruote/storage/base'
@@ -47,8 +46,7 @@ module Redis
   #
   #   engine = Ruote::Engine.new(
   #     Ruote::Worker.new(
-  #       Ruote::Redis::RedisStorage.new(
-  #         ::Redis.new(:db => 14, :thread_safe => true), {})))
+  #       Ruote::Redis::RedisStorage.new('db'=> 14, 'thread_safe' => true)))
   #
   #
   # == em-redis
@@ -66,12 +64,51 @@ module Redis
 
     attr_reader :redis
 
+    # Listing the redis options to differentiate them from ruote storage
+    # options.
+    #
+    REDIS_OPTIONS = %w[ host port path db thread_safe logger ]
+
     # A Redis storage for ruote.
+    #
+    # Can be initialized in two ways
+    #
+    #   Ruote::Redis::Storage.new(
+    #     ::Redis.new(
+    #       :host => '127.0.0.1',
+    #       :db => 13,
+    #       :thread_safe => true))
+    #
+    # or
+    #
+    #   Ruote::Redis::Storage.new(
+    #     'host' => '127.0.0.1',
+    #     'db' => 13,
+    #     'thread_safe' => true)
+    #
+    # The first style is probably better avoided.
     #
     def initialize(redis, options={})
 
+      if options == {} && redis.is_a?(Hash)
+
+        redis_options, options = redis.partition { |k, v|
+          REDIS_OPTIONS.include?(k.to_s)
+        }
+
+        redis_options = Hash[redis_options]
+        options = Hash[options]
+
+        redis_options = redis_options.inject({}) { |h, (k, v)|
+          h[k.to_sym] = v;
+          h
+        }
+
+        redis = ::Redis.new(redis_options)
+      end
+
       @redis = redis
-      #@options = options
+      @options = options
 
       def @redis.keys_to_a(opt)
         keys(opt) rescue []
