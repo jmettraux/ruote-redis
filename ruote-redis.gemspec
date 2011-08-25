@@ -1,13 +1,12 @@
-# encoding: utf-8
-
-require File.join(File.dirname(__FILE__), 'lib/ruote/redis/version')
-  # bundler wants absolute path
-
 
 Gem::Specification.new do |s|
 
   s.name = 'ruote-redis'
-  s.version = Ruote::Redis::VERSION
+
+  s.version = File.read(
+    File.expand_path('../lib/ruote/redis/version.rb', __FILE__)
+  ).match(/ VERSION *= *['"]([^'"]+)/)[1]
+
   s.platform = Gem::Platform::RUBY
   s.authors = [ 'John Mettraux' ]
   s.email = [ 'jmettraux@gmail.com' ]
