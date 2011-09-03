@@ -110,8 +110,17 @@ module Redis
       @redis = redis
       @options = options
 
-      def @redis.keys_to_a(opt)
-        keys(opt) rescue []
+      # Returns an array of the (String) keys that match the given pattern.
+      #
+      # Returns an empty array if anything goes wrong.
+      #
+      def @redis.keys_to_a(pattern)
+
+        if (a = (keys(pattern) rescue nil)).is_a?(Array)
+          a
+        else
+          []
+        end
       end
 
       replace_engine_configuration(options)

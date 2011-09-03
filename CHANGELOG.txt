@@ -4,6 +4,7 @@
 
 == ruote-redis 2.2.1    not yet released
 
+- further hardened Redis#keys_to_a
 - simplified storage initialization
 - using rpush and lpop for msgs (one del less per msg)
 
