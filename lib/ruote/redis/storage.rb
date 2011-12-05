@@ -284,7 +284,9 @@ module Redis
       limit = opts[:limit] || ids.length
       ids = ids[skip, limit]
 
-      docs = ids.length > 0 ? @redis.mget(*ids) : []
+      docs = ids.length > 0 && @redis.mget(*ids)
+      docs = docs.is_a?(Array) ? docs : []
+
       docs = docs.inject({}) do |h, doc|
         if doc
           doc = Rufus::Json.decode(doc)
