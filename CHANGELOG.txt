@@ -2,7 +2,7 @@
 = ruote-redis - CHANGELOG.txt
 
 
-== ruote-redis 2.2.1    not yet released
+== ruote-redis 2.3.0    not yet released
 
 - further hardened Redis#keys_to_a
 - simplified storage initialization

@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.summary = 'Redis storage for ruote (a Ruby workflow engine)'
   s.description = %q{
 Redis storage for ruote (a Ruby workflow engine)
-}
+  }
 
   #s.files = `git ls-files`.split("\n")
   s.files = Dir[
@@ -24,7 +24,7 @@ Redis storage for ruote (a Ruby workflow engine)
     '*.gemspec', '*.txt', '*.rdoc', '*.md'
   ]
 
-  s.add_runtime_dependency 'redis', '2.2.2'
+  s.add_runtime_dependency 'redis'#, '>= 2.2.2'
   s.add_runtime_dependency 'ruote', ">= #{s.version}"
 
   s.add_development_dependency 'rake'
