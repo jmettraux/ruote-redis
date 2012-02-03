@@ -146,13 +146,12 @@ module Redis
 
     def get_msgs
 
-      msgs = []
+      # one message at a time, don't want pop messages, crash and thus lose
+      # the unprocessed ones...
 
-      while (doc = @redis.lpop('msgs')) and (msgs.size < 21)
-        msgs << from_json(doc)
-      end
+      doc = @redis.lpop('msgs')
 
-      msgs
+      doc ? [ from_json(doc) ] : []
     end
 
     def put_schedule(flavour, owner_fei, s, msg)
