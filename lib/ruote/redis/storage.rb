@@ -146,6 +146,11 @@ module Redis
 
     def get_msgs
 
+      #doc = @redis.blpop('msgs', 1)
+      #doc = doc[1] if doc
+        #
+        # doesn't make much sense and slows down the tests dramatically
+
       # one message at a time, don't want pop messages, crash and thus lose
       # the unprocessed ones...
 
