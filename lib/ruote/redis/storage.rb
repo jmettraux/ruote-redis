@@ -318,6 +318,7 @@ module Redis
     def purge!
 
       @redis.keys_to_a('*').each { |k| @redis.del(k) }
+        # TODO: replace with flushdb
     end
 
     # Returns a String containing a representation of the current content of

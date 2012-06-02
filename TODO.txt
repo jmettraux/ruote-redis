@@ -6,4 +6,7 @@
 [x] 1 ::Redis instance per thread ? (instead of :thread_safe => true)
 
 [ ] resque participant ?
+[ ] sidekiq participant ?
+
+[ ] use flushdb
 
