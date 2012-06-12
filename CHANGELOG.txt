@@ -4,6 +4,7 @@
 
 == ruote-redis 2.3.0    not yet released
 
+- Storage#reconnect (shortcut to @redis.reconnect)
 - further hardened Redis#keys_to_a
 - simplified storage initialization
 - using rpush and lpop for msgs (one del less per msg)

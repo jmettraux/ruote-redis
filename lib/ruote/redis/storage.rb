@@ -361,6 +361,13 @@ module Redis
       @redis.keys_to_a("#{type}/*").each { |k| (@redis.del(k) rescue nil) }
     end
 
+    # Simply calls @redis.reconnect
+    #
+    def reconnect
+
+      @redis.reconnect
+    end
+
     protected
 
     LOCK_KEY = /-lock$/
