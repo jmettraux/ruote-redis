@@ -96,13 +96,8 @@ module Redis
           REDIS_OPTIONS.include?(k.to_s)
         }
 
-        redis_options = Hash[redis_options]
+        redis_options = Hash[redis_options.collect { |k, v| [ k.to_sym, v ] }]
         options = Hash[options]
-
-        redis_options = redis_options.inject({}) { |h, (k, v)|
-          h[k.to_sym] = v;
-          h
-        }
 
         redis = ::Redis.new(redis_options)
       end
@@ -299,12 +294,10 @@ module Redis
       docs = ids.length > 0 && @redis.mget(*ids)
       docs = docs.is_a?(Array) ? docs : []
 
-      docs = docs.inject({}) do |h, doc|
-        if doc
-          doc = Rufus::Json.decode(doc)
-          h[doc['_id']] = doc
-        end
-        h
+      docs = docs.each_with_object({}) do |doc, h|
+        next unless doc
+        doc = Rufus::Json.decode(doc)
+        h[doc['_id']] = doc
       end
 
       return docs.size if opts[:count]
