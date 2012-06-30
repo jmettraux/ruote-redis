@@ -138,8 +138,9 @@ module Redis
     def put_msg(action, options)
 
       doc = prepare_msg_doc(action, options)
+      doc['put_at'] = Ruote.now_to_utc_s
 
-      @redis.rpush('msgs', to_json(doc))
+      @redis.rpush('msgs', Rufus::Json.encode(doc))
 
       nil
     end
@@ -165,7 +166,9 @@ module Redis
 
       return nil unless doc
 
-      @redis.set(key_for(doc), to_json(doc))
+      doc['put_at'] = Ruote.now_to_utc_s
+
+      @redis.set(key_for(doc), Rufus::Json.encode(doc))
 
       doc['_id']
     end
@@ -204,9 +207,14 @@ module Redis
           #
           # put is successful (return nil)
           #
-          nrev = (rev.to_i + 1).to_s
-          @redis.set(key, to_json(doc.merge('_rev' => nrev)))
-          doc['_rev'] = nrev if opts[:update_rev]
+          ndoc = doc.merge(
+            '_rev' => (rev.to_i + 1).to_s, 'put_at' => Ruote.now_to_utc_s)
+
+          @redis.set(key, Rufus::Json.encode(ndoc))
+
+          doc.merge!(
+            '_rev' => ndoc['_rev'], 'put_at' => ndoc['put_at']
+          ) if opts[:update_rev]
 
           nil
         end
@@ -321,14 +329,6 @@ module Redis
         # TODO: replace with flushdb
     end
 
-    # Returns a String containing a representation of the current content of
-    # in this Redis storage.
-    #
-    def dump(type)
-
-      @redis.keys_to_a("#{type}/*").sort.join("\n")
-    end
-
     # Shuts this worker down.
     #
     # (This close / shutdown dichotomy has to be resolved at some point...)
@@ -424,12 +424,6 @@ module Redis
     def from_json(s)
 
       s ? Rufus::Json.decode(s) : nil
-    end
-
-    def to_json(doc, opts={})
-
-      Rufus::Json.encode(
-        opts[:delete] ? nil : doc.merge('put_at' => Ruote.now_to_utc_s))
     end
   end
 

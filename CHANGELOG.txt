@@ -4,6 +4,7 @@
 
 == ruote-redis 2.3.0    not yet released
 
+- fix update_rev (also update put_at)
 - Storage#reconnect (shortcut to @redis.reconnect)
 - further hardened Redis#keys_to_a
 - simplified storage initialization
