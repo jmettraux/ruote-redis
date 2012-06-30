@@ -325,8 +325,8 @@ module Redis
 
     def purge!
 
-      @redis.keys_to_a('*').each { |k| @redis.del(k) }
-        # TODO: replace with flushdb
+      2.times { @redis.flushdb rescue nil }
+        # 2 times to work around Redis::ProtocolError '3'
     end
 
     # Shuts this worker down.
