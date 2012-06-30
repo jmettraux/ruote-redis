@@ -161,6 +161,7 @@ module Redis
 
       return nil unless doc
 
+      doc['_rev'] = '0'
       doc['put_at'] = Ruote.now_to_utc_s
 
       @redis.set(key_for(doc), Rufus::Json.encode(doc))
@@ -270,7 +271,9 @@ module Redis
 
       elsif keys.first.is_a?(String)
 
-        keys.collect { |k| @redis.keys_to_a("#{type}/*!#{k}") }.flatten
+        keys.collect { |k|
+          @redis.keys_to_a("#{type}/*!#{k}#{type == 'schedules' ? '-*' : ''}")
+        }.flatten
 
       else #if keys.first.is_a?(Regexp)
 
