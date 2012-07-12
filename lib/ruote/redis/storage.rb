@@ -203,14 +203,11 @@ module Redis
           #
           # put is successful (return nil)
           #
-          ndoc = doc.merge(
-            '_rev' => (rev.to_i + 1).to_s, 'put_at' => Ruote.now_to_utc_s)
+          doc = doc.send(
+            opts[:update_rev] ? :merge! : :merge,
+            { '_rev' => (rev.to_i + 1).to_s, 'put_at' => Ruote.now_to_utc_s })
 
-          @redis.set(key, Rufus::Json.encode(ndoc))
-
-          doc.merge!(
-            '_rev' => ndoc['_rev'], 'put_at' => ndoc['put_at']
-          ) if opts[:update_rev]
+          @redis.set(key, Rufus::Json.encode(doc))
 
           nil
         end
