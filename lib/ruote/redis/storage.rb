@@ -140,7 +140,9 @@ module Redis
       nil
     end
 
-    def get_msgs
+    # Note: the worker argument is not used in this storage implementation.
+    #
+    def get_msgs(worker)
 
       #doc = @redis.blpop('msgs', 1)
       #doc = doc[1] if doc
