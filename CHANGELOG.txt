@@ -4,7 +4,6 @@
 
 == ruote-redis 2.3.0    not yet released
 
-- Storage#get_msgs(worker)
 - fix issue uncovered by Base#remove_process
 - fix update_rev (also update put_at)
 - Storage#reconnect (shortcut to @redis.reconnect)
