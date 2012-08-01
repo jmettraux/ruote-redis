@@ -58,6 +58,24 @@ module Redis
   # If you try and it works, feedback is welcome
   # http://groups.google.com/group/openwferu-users
   #
+  #
+  # == 'pop_count' option
+  #
+  # By default, when the worker queries this storage for msgs to process,
+  # the storage will try to pop 28 msgs. This number can be changed thanks
+  # to the 'pop_count' option, like in:
+  #
+  #   engine = Ruote::Engine.new(
+  #     Ruote::Worker.new(
+  #       Ruote::Redis::RedisStorage.new(
+  #         'db'=> 14, 'thread_safe' => true, 'pop_count' => 56)))
+  #
+  # Don't put too high a number, it increases the chance of msgs getting lost
+  # in case of the worker going down.
+  #
+  # (if there is a need to avoid such a scenario in the future,
+  # Redis' rpoplpush might come in handy).
+  #
   class Storage
 
     include Ruote::StorageBase
@@ -105,6 +123,8 @@ module Redis
       @redis = redis
       @options = options
 
+      @pop_count = @options['pop_count'] || 28
+
       # Returns an array of the (String) keys that match the given pattern.
       #
       # Returns an empty array if anything goes wrong.
@@ -135,7 +155,7 @@ module Redis
       doc = prepare_msg_doc(action, options)
       doc['put_at'] = Ruote.now_to_utc_s
 
-      @redis.rpush('msgs', Rufus::Json.encode(doc))
+      @redis.lpush('msgs', Rufus::Json.encode(doc))
 
       nil
     end
@@ -145,7 +165,7 @@ module Redis
     def get_msgs
 
       @redis.pipelined {
-        28.times { @redis.rpop('msgs') }
+        @pop_count.times { @redis.rpop('msgs') }
       }.compact.collect { |d|
         from_json(d)
       }
