@@ -144,17 +144,11 @@ module Redis
     #
     def get_msgs
 
-      #doc = @redis.blpop('msgs', 1)
-      #doc = doc[1] if doc
-        #
-        # doesn't make much sense and slows down the tests dramatically
-
-      # one message at a time, don't want pop messages, crash and thus lose
-      # the unprocessed ones...
-
-      doc = @redis.lpop('msgs')
-
-      doc ? [ from_json(doc) ] : []
+      @redis.pipelined {
+        28.times { @redis.rpop('msgs') }
+      }.compact.collect { |d|
+        from_json(d)
+      }
     end
 
     def put_schedule(flavour, owner_fei, s, msg)
