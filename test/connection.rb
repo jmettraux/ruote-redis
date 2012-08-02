@@ -28,7 +28,6 @@ def new_storage(opts)
   #  opts)
 
   Ruote::Redis::Storage.new(
-    #opts.merge('db' => 14, 'thread_safe' => true))
-    opts.merge('db' => 14, 'thread_safe' => true, 'pop_count' => 14))
+    opts.merge('db' => 14, 'thread_safe' => true, 'pop_count' => 28))
 end
 
