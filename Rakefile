@@ -76,17 +76,19 @@ Rake::RDocTask.new do |rd|
 end
 
 
+##
+## upload_rdoc
 #
-# upload_rdoc
-
-desc %{
-  upload the rdoc to rubyforge
-}
-task :upload_rdoc => [ :clean, :rdoc ] do
-
-  account = 'jmettraux@rubyforge.org'
-  webdir = '/var/www/gforge-projects/ruote'
-
-  sh "rsync -azv -e ssh rdoc/#{GEMSPEC.name}_rdoc #{account}:#{webdir}/"
-end
+#desc %{
+#  upload the rdoc to rubyforge
+#}
+#task :upload_rdoc => [ :clean, :rdoc ] do
+#
+#  account = 'jmettraux@rubyforge.org'
+#  webdir = '/var/www/gforge-projects/ruote'
+#
+#  sh "rsync -azv -e ssh rdoc/#{GEMSPEC.name}_rdoc #{account}:#{webdir}/"
+#end
+  #
+  # leverage rdoc.info instead
 
