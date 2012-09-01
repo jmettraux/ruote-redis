@@ -38,13 +38,13 @@ start a redis server instance (port 6379) and then
 
 get into ruote/ and do
 
-  ruby test/unit/storage.rb -- --redis
+  RUOTE_STORAGE=redis ruby test/functional/storage.rb
 
 * functional tests :
 
 get into ruote/ and do
 
-  ruby test/functional/test.rb -- --redis
+  RUOTE_STORAGE=redis ruby test/functional/test.rb
 
 
 == license
