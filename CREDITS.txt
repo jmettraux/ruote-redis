@@ -15,5 +15,6 @@
 
 == many thanks to
 
-- the Redis team for their great project
+- the Redis authors and community
+- the redis.rb authors and community
 
