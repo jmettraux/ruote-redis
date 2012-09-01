@@ -2,7 +2,7 @@
 = ruote-redis - CHANGELOG.txt
 
 
-== ruote-redis 2.3.0    not yet released
+== ruote-redis 2.3.0    released 2012/09/01
 
 - fix issue uncovered by Base#remove_process
 - fix update_rev (also update put_at)
