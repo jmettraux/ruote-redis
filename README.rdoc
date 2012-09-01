@@ -21,7 +21,8 @@ The storage is instantiate by passing a redis-rb instance to the storage.
 
 Passing an em-redis instance might work, but I haven't tried.
 
-Tested with Redis 2.0.4 and 2.2.12 (redis-rb 2.1.1, and 2.2.2).
+Tested with Redis 2.0.1 (redis-rb 3.0.1) on Debian GNU/Linux.
+Tested with Redis 2.4.16 (redis-rb 3.0.1) on OSX snoleo.
 
 
 == running tests
