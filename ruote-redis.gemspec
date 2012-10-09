@@ -25,7 +25,7 @@ Redis storage for ruote (a Ruby workflow engine)
   ]
 
   s.add_runtime_dependency 'redis'#, '>= 2.2.2'
-  s.add_runtime_dependency 'ruote', ">= #{s.version}"
+  s.add_runtime_dependency 'ruote', ">= #{s.version.to_s.split('.')[0, 3].join('.')}"
 
   s.add_development_dependency 'rake'
 
