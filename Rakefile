@@ -1,5 +1,5 @@
 
-$:.unshift('.') # 1.9.2
+$:.unshift('.') # 1.9.x
 
 require 'rubygems'
 
@@ -22,9 +22,9 @@ task :test do
   puts
   puts "to test ruote-redis, head to your ruote/ dir and run"
   puts
-  puts "  ruby test/test.rb -- --redis"
+  puts "  RUOTE_STORAGE=redis ruby test/functional/test.rb"
   puts
-  puts "but first, make sure your ruote-dm/test/functional_connection.rb"
+  puts "but first, make sure your ruote-dm/test/connection.rb"
   puts "is set correctly."
   puts
 end
