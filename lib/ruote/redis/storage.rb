@@ -24,6 +24,7 @@
 
 require 'redis'
 
+require 'zlib'
 require 'rufus-json'
 require 'ruote/storage/base'
 require 'ruote/redis/version'
@@ -106,6 +107,25 @@ module Redis
     #
     # The first style is probably better avoided.
     #
+    # == compression
+    #
+    # This storage, by default, compresses (using zlib) the JSON documents
+    # before placing them in Redis.
+    #
+    # The 'zip' option controls the compression level:
+    #
+    # * 'none': no compression, JSON strings are directly placed in Redis
+    # * 'size': max compression, smallest output
+    # * 'speed': best speed, compresses but favours speed over small size
+    # * 'default': default zlib setting, balance between speed and size
+    #
+    # The idea behind this feature is to not consume too much memory on the
+    # Redis host.
+    #
+    # It's OK to turn this feature on and off, this storage will read data
+    # compressed or not (yes this storage can read older data sets produced
+    # when ruote-redis had no compression feature).
+    #
     def initialize(redis, options={})
 
       if options == {} && redis.is_a?(Hash)
@@ -137,6 +157,14 @@ module Redis
           []
         end
       end
+
+      @zip =
+        case @options['zip']
+          when 'none' then nil
+          when 'size' then Zlib::BEST_COMPRESSION
+          when 'speed' then Zlib::BEST_SPEED
+          else Zlib::DEFAULT_COMPRESSION
+        end
 
       replace_engine_configuration(options)
     end
@@ -431,12 +459,20 @@ module Redis
 
     def decode(s)
 
-      s ? Rufus::Json.decode(s) : nil
+      return nil unless s
+
+      s = Zlib::Inflate.inflate(s) if s[0, 1] != '{'
+
+      Rufus::Json.decode(s)
     end
 
     def encode(doc)
 
-      Rufus::Json.encode(doc)
+      s = Rufus::Json.encode(doc)
+
+      s = Zlib::Deflate.deflate(s, @zip) if @zip
+
+      s
     end
   end
 
