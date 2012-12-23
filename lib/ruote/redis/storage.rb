@@ -155,7 +155,7 @@ module Redis
       doc = prepare_msg_doc(action, options)
       doc['put_at'] = Ruote.now_to_utc_s
 
-      @redis.lpush('msgs', Rufus::Json.encode(doc))
+      @redis.lpush('msgs', encode(doc))
 
       nil
     end
@@ -167,7 +167,7 @@ module Redis
       @redis.pipelined {
         @pop_count.times { @redis.rpop('msgs') }
       }.compact.collect { |d|
-        from_json(d)
+        decode(d)
       }
     end
 
@@ -180,7 +180,7 @@ module Redis
       doc['_rev'] = '0'
       doc['put_at'] = Ruote.now_to_utc_s
 
-      @redis.set(key_for(doc), Rufus::Json.encode(doc))
+      @redis.set(key_for(doc), encode(doc))
 
       doc['_id']
     end
@@ -223,7 +223,7 @@ module Redis
             opts[:update_rev] ? :merge! : :merge,
             { '_rev' => (rev.to_i + 1).to_s, 'put_at' => Ruote.now_to_utc_s })
 
-          @redis.set(key, Rufus::Json.encode(doc))
+          @redis.set(key, encode(doc))
 
           nil
         end
@@ -311,9 +311,8 @@ module Redis
       docs = docs.is_a?(Array) ? docs : []
 
       docs = docs.each_with_object({}) do |doc, h|
-        next unless doc
-        doc = Rufus::Json.decode(doc)
-        h[doc['_id']] = doc
+        doc = decode(doc)
+        h[doc['_id']] = doc if doc
       end
 
       return docs.size if opts[:count]
@@ -427,12 +426,17 @@ module Redis
 
     def do_get(key)
 
-      from_json(@redis.get(key))
+      decode(@redis.get(key))
     end
 
-    def from_json(s)
+    def decode(s)
 
       s ? Rufus::Json.decode(s) : nil
+    end
+
+    def encode(doc)
+
+      Rufus::Json.encode(doc)
     end
   end
 
