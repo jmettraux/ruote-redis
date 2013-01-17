@@ -9,8 +9,9 @@
 
 == contributors
 
-- John Le - http://github.com/sandbox
-- Aaron Lee - http://github.com/wwkeyboard
+- John Allen - https://github.com/johnallen3d
+- John Le - https://github.com/sandbox
+- Aaron Lee - https://github.com/wwkeyboard
 
 
 == many thanks to

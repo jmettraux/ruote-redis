@@ -2,6 +2,11 @@
 = ruote-redis - CHANGELOG.txt
 
 
+== ruote-redis 2.3.1    not yet released
+
+- try harder to reconnect (redis or redis.client)
+
+
 == ruote-redis 2.3.0    released 2012/09/01
 
 - fix issue uncovered by Base#remove_process

@@ -401,7 +401,11 @@ module Redis
     #
     def reconnect
 
-      @redis.reconnect
+      if @redis.respond_to?(:reconnect)
+        @redis.reconnect
+      else
+        @redis.client.reconnect
+      end
     end
 
     protected
