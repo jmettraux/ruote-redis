@@ -10,3 +10,7 @@
 
 [ ] use flushdb
 
+[ ] remove the use of KEYS :
+    http://therealadam.com/2013/02/07/adams-law-of-redis/
+    or well, use a different redis/redis database? For people mixing...
+
