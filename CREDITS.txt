@@ -14,6 +14,11 @@
 - Aaron Lee - https://github.com/wwkeyboard
 
 
+== feedback
+
+- Leon Du - https://github.com/leondu - 2.3.x dependency
+
+
 == many thanks to
 
 - the Redis authors and community
